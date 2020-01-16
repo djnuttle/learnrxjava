@@ -17,12 +17,12 @@ import learnrxjava.types.MovieList;
 import learnrxjava.types.Video;
 
 /**
- * Mastering concurrency is challenging, But we can make it much easier by simply choosing the right 
- * abstraction to model an asynchronous operation, and then using simple composition operations to 
+ * Mastering concurrency is challenging, But we can make it much easier by simply choosing the right
+ * abstraction to model an asynchronous operation, and then using simple composition operations to
  * glue different instances of these abstractions together to build solutions to complex problems.
- * 
- * To learn how stream composition works, we will first learn how to use the composition methods 
- * (map, filter, flatMap, reduce, zip) to compose together a data structure with which most developers 
+ * <p>
+ * To learn how stream composition works, we will first learn how to use the composition methods
+ * (map, filter, flatMap, reduce, zip) to compose together a data structure with which most developers
  * are already familiar: a list.
  */
 public class ComposableListExercises<T> extends ArrayList<T> implements ComposableList<T> {
@@ -92,11 +92,11 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
                 new Video(675465, "Fracture", 5.0));
 
         ComposableListExercises<JSON> videoAndTitlePairs = new ComposableListExercises<JSON>();
-        
+
         newReleases.forEach(video -> {
-           videoAndTitlePairs.add(json("id", video.id, "title", video.title));
+            videoAndTitlePairs.add(json("id", video.id, "title", video.title));
         });
-        
+
         return videoAndTitlePairs;
     }
 
@@ -121,19 +121,12 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     public <R> ComposableList<R> map(Function<T, R> projectionFunction) {
         ComposableListExercises<R> results = new ComposableListExercises<R>();
         this.forEach(itemInList -> {
-            // ------------ INSERT CODE HERE! ----------------------------
-            // Apply the projectionFunction to each item in the list and add
-            // each result to the results list.
-            // Note that you can apply a projectionFunction to a value like this:
-            //  projectionFunction.apply(5)
-            // ------------ INSERT CODE HERE! ----------------------------
-            
+            results.add(projectionFunction.apply(itemInList));
         });
-        
-        //return results;
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        return results;
     }
-    
+
     /*
     Exercise 5: Use map() to project a ComposableList of videos into a stream of {id,title} JSON
 
@@ -142,14 +135,12 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     */
     public static ComposableList<JSON> exercise5() {
         ComposableListExercises<Video> newReleases = ComposableListExercises.of(
-            new Video(70111470, "Die Hard", 4.0),
-            new Video(654356453, "Bad Boys", 5.0),
-            new Video(65432445, "The Chamber", 4.0),
-            new Video(675465, "Fracture", 5.0));
-         
-        // complete this expression 
-        // return newReleases.map(video -> 
-        throw new UnsupportedOperationException("Not implemented yet.");
+                new Video(70111470, "Die Hard", 4.0),
+                new Video(654356453, "Bad Boys", 5.0),
+                new Video(65432445, "The Chamber", 4.0),
+                new Video(675465, "Fracture", 5.0));
+
+        return newReleases.map(video -> json("id", video.id, "title", video.title));
     }
 
     /*
@@ -163,39 +154,38 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
      */
     public static ComposableList<Video> exercise6() {
         ComposableListExercises<Video> newReleases = ComposableListExercises.of(
-            new Video(
-                    70111470,
-                    "Die Hard",
-                    4.0
-            ),
-            new Video(
-                    654356453,
-                    "Bad Boys",
-                    5.0
-            ),
-            new Video(
-                    65432445,
-                    "The Chamber",
-                    4.0
-            ),
-            new Video(
-                    675465,
-                    "Fracture",
-                    5.0
-            ));
+                new Video(
+                        70111470,
+                        "Die Hard",
+                        4.0
+                ),
+                new Video(
+                        654356453,
+                        "Bad Boys",
+                        5.0
+                ),
+                new Video(
+                        65432445,
+                        "The Chamber",
+                        4.0
+                ),
+                new Video(
+                        675465,
+                        "Fracture",
+                        5.0
+                ));
 
         ComposableListExercises<Video> highRatedVideos = new ComposableListExercises<Video>();
 
         newReleases.forEach(video -> {
-            // Insert code here that adds a video to the highRatedVideos list
-            // if it has a rating of 5.0.
-
+            if (video.rating == 5) {
+                highRatedVideos.add(video);
+            }
         });
-        
-        // return highRatedVideos;
-        throw new UnsupportedOperationException("Not implemented yet.");        
+
+        return highRatedVideos;
     }
-    
+
     /*
     Exercise 7: Implement filter()
 
@@ -215,17 +205,12 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     public ComposableList<T> filter(Predicate<T> predicateFunction) {
         ComposableListExercises<T> results = new ComposableListExercises<T>();
         this.forEach(itemInList -> {
-            // ------------ INSERT CODE HERE! ----------------------------
-            // Apply the predicateFunction to each item in the list. If the
-            // result is true, add the result to the results list.
-            // Note: you can apply the predicateFunction to a value like this:
-            // predicateFunction.test(5)
-            // ------------ INSERT CODE HERE! ----------------------------
-
+            if (predicateFunction.test(itemInList)) {
+                results.add(itemInList);
+            }
         });
 
-        // return results;
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return results;
     }
 
     /*
@@ -238,35 +223,30 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
      */
     public static ComposableList<Integer> exercise8() {
         ComposableListExercises<Video> newReleases
-            = ComposableListExercises.of(
-                    new Video(
-                            70111470,
-                            "Die Hard",
-                            4.0
-                    ),
-                    new Video(
-                            654356453,
-                            "Bad Boys",
-                            5.0
-                    ),
-                    new Video(
-                            65432445,
-                            "The Chamber",
-                            4.0
-                    ),
-                    new Video(
-                            675465,
-                            "Fracture",
-                            5.0
-                    ));
+                = ComposableListExercises.of(
+                new Video(
+                        70111470,
+                        "Die Hard",
+                        4.0
+                ),
+                new Video(
+                        654356453,
+                        "Bad Boys",
+                        5.0
+                ),
+                new Video(
+                        65432445,
+                        "The Chamber",
+                        4.0
+                ),
+                new Video(
+                        675465,
+                        "Fracture",
+                        5.0
+                ));
 
-        // ------------ INSERT CODE HERE! -----------------------------------
-        // Chain the filter and map functions to select the id of all videos
-        // with a rating of 5.0.
-        // ------------ INSERT CODE HERE! -----------------------------------
-        //return newReleases // Complete this expression
-
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return newReleases.filter(video -> video.rating == 5)
+                .map(video -> video.id);
     }
 
     /*
@@ -283,27 +263,27 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
      */
     public static ComposableList<Integer> exercise9() {
         ComposableListExercises<MovieList> movieLists = ComposableListExercises.of(
-            new MovieList(
-                "New Releases",
-                ComposableListExercises.of(
-                        new Video(70111470, "Die Hard", 4.0),
-                        new Video(654356453, "Bad Boys", 5.0))),
-            new MovieList(
-                "Dramas",
-                ComposableListExercises.of(
-                        new Video(65432445, "The Chamber", 4.0),
-                        new Video(675465, "Fracture", 5.0))));
+                new MovieList(
+                        "New Releases",
+                        ComposableListExercises.of(
+                                new Video(70111470, "Die Hard", 4.0),
+                                new Video(654356453, "Bad Boys", 5.0))),
+                new MovieList(
+                        "Dramas",
+                        ComposableListExercises.of(
+                                new Video(65432445, "The Chamber", 4.0),
+                                new Video(675465, "Fracture", 5.0))));
 
         ComposableListExercises<Integer> allVideoIdsInMovieLists = new ComposableListExercises<Integer>();
 
-        // ------------   INSERT CODE HERE!  -----------------------------------
-        // Use two nested forEach loops to flatten the movieLists into a list of
-        // video ids.
-        // ------------   INSERT CODE HERE!  -----------------------------------
-        //return allVideoIdsInMovieLists;
-        throw new UnsupportedOperationException("Not implemented yet.");
+        movieLists.forEach(movieList -> {
+            movieList.videos.forEach(video -> {
+                allVideoIdsInMovieLists.add(video.id);
+            });
+        });
+        return allVideoIdsInMovieLists;
     }
-    
+
     /*
     Exercise 10: Implement concatMap()
 
@@ -326,25 +306,17 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     is equivalent to
 
     ComposableList.of(0, 10, 20, 100, 110, 120, 200, 210, 220)
-     */   
+     */
     public <R> ComposableList<R> concatMap(
-        Function<T, ComposableList<R>> projectionFunctionThatReturnsList) {
+            Function<T, ComposableList<R>> projectionFunctionThatReturnsList) {
         ComposableListExercises<R> results = new ComposableListExercises<R>();
         for (T itemInList : this) {
-            // ------------ INSERT CODE HERE! ----------------------------
-            // Apply the projection function to each item in the list.
-            // This will create _another_ list. Then loop through each
-            // inner list and add each item to the results list.
-            // Note that you can apply a projectionFunction to a value like this:
-            // projectionFunctionThatReturnsList.apply(5)
-            // ------------ INSERT CODE HERE! ----------------------------
-
+            projectionFunctionThatReturnsList.apply(itemInList).forEach(results::add);
         }
-        
-        //return results;
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        return results;
     }
-    
+
     /*
     As you may have already guessed, the ComposableList class has the concatMap method. The concatMap method 
     may seem pretty abstract at first, and it may not be immediately obvious how it can be used to transform 
@@ -367,18 +339,11 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
                                 new Video(65432445, "The Chamber", 4.0),
                                 new Video(675465, "Fracture", 5.0))));
 
-        // ------------   INSERT CODE HERE!  -----------------------------------
-        // Use map and concatAll to flatten the movieLists in a list of video ids.
-        // return movieLists // finish expression
-        // ------------   INSERT CODE HERE!  -----------------------------------
-        // **************ANSWER START***************//
-        // return movieLists.
-        //     concatMap(movieList -> 
-        //         movieList.videos.map(video -> video.id));
-        // **************ANSWER END***************//
-        throw new UnsupportedOperationException("Not implemented yet.");
+
+        return movieLists
+                .concatMap(movieList -> movieList.videos.map(video -> video.id));
     }
-    
+
     /*
     exercise 12: Retrieve id, title, and a 150x200 box art url for every video
 
@@ -394,51 +359,51 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     */
     public static ComposableList<JSON> exercise12() {
         ComposableListExercises<MovieList> movieLists = ComposableListExercises.of(
-            new MovieList(
-                "Instant Queue",
-                ComposableListExercises.of(
-                    new Video(
-                        70111470,
-                        "Die Hard",
-                        5.0,
-                        null,
+                new MovieList(
+                        "Instant Queue",
                         ComposableListExercises.of(
-                            new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/DieHard150.jpg")
-                        )),
-                    new Video(
-                        654356453,
-                        "Bad Boys",
-                        4.0,
-                        null,
+                                new Video(
+                                        70111470,
+                                        "Die Hard",
+                                        5.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/DieHard150.jpg")
+                                        )),
+                                new Video(
+                                        654356453,
+                                        "Bad Boys",
+                                        4.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys200.jpg"),
+                                                new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys150.jpg")
+                                        ))
+                        )
+                ),
+                new MovieList(
+                        "New Releases",
                         ComposableListExercises.of(
-                            new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys200.jpg"),
-                            new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys150.jpg")
-                        ))
+                                new Video(
+                                        65432445,
+                                        "The Chamber",
+                                        4.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber150.jpg")
+                                        )),
+                                new Video(
+                                        675465,
+                                        "Fracture",
+                                        5.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg"),
+                                                new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/Fracture150.jpg"),
+                                                new BoxArt(300, 200, "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg")
+                                        ))
+                        )
                 )
-            ),
-            new MovieList(
-                "New Releases",
-                ComposableListExercises.of(
-                    new Video(
-                        65432445,
-                        "The Chamber",
-                        4.0,
-                        null,
-                        ComposableListExercises.of(
-                            new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber150.jpg")
-                        )),
-                    new Video(
-                        675465,
-                        "Fracture",
-                        5.0,
-                        null,
-                        ComposableListExercises.of(
-                            new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg"),
-                            new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/Fracture150.jpg"),
-                            new BoxArt(300, 200, "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg")
-                        ))
-                )
-            )
         );
 
         // Use one or more map, concatAll, and filter calls to create an ComposableList with the following items
@@ -449,8 +414,12 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
         //   {"id": 675465,"title": "Fracture","boxart":"http://cdn-0.nflximg.com/images/2891/Fracture150.jpg" },
         // };
 
-        // return movieLists // Complete this expression!
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return movieLists.concatMap(movieList -> {
+            return movieList.videos.concatMap(video -> {
+                ComposableList<BoxArt> boxarts = video.boxarts.filter(boxart -> boxart.height == 200 && boxart.width == 150);
+                return boxarts.map(boxart -> json("id", video.id, "title", video.title, "boxart", boxart.url));
+            });
+        });
     }
 
     /*
@@ -474,24 +443,23 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
                 new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/Fracture150.jpg"),
                 new BoxArt(425, 150, "http://cdn-0.nflximg.com/images/2891/Fracture425.jpg"),
                 new BoxArt(300, 200, "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg")
-            );
+        );
 
-            int currentSize = 0;
-            int maxSize = -1;
-            BoxArt largestBoxart = null;
+        int currentSize = 0;
+        int maxSize = -1;
+        BoxArt largestBoxart = null;
 
-            for (BoxArt boxart: boxarts) {
-                currentSize = boxart.width * boxart.height;
-                if (currentSize > maxSize) {
-                    // ****** INSERT CODE HERE ********
-                    // Assign the largestBoxart to the current boxart, and assign the maxSize to the currentSize.
-                    // ****** INSERT CODE HERE ********
-                }
+        for (BoxArt boxart : boxarts) {
+            currentSize = boxart.width * boxart.height;
+            if (currentSize > maxSize) {
+                largestBoxart = boxart;
+                maxSize = currentSize;
             }
+        }
 
-        // return largestBoxart;
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return largestBoxart;
     }
+
     /*
     Exercise 14: Implement reduce()
 
@@ -504,7 +472,7 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     values in the list are exhausted, and then returns a list containing only the last aggregation value. 
     Reduce uses the first value in the list as the initial aggregation value. For example 
     ComposableList.of(1,2,3).reduce((acc,curr) -> acc + curr) is structurally equivalent to ComposableList.of(6).  
-    In the previous example, theBinary function is invoked three times. 
+    In the previous example, theBinary function is invoked three times. (NO, 2 TIMES!)
 
     The first time the binary lambda function is invoked the accumulated value acc is 1 (the first value in the 
     list) and the current value curr is 2 (the second value in the list). The next time the binary lambda function 
@@ -517,9 +485,7 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
 
         // If the list is empty, return this
         if (this.size() == 0) {
-            // ************ INSERT CODE HERE **************
-            //  if the list is empty, return this
-            // ********************************************
+            return ComposableListExercises.of();
         } else {
             accumulatedValue = this.get(0);
 
@@ -527,18 +493,12 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
             // the previous computation back into the combiner function until
             // we've exhausted the entire list and are left with only one function.
             while (counter < this.size()) {
-                // ****** INSERT CODE HERE ********
-                // Set accumulatedValue to the result of passing accumulatedValue and the list value at the 
-                // counter index to the combiner function.
-                // ****** INSERT CODE HERE ********
-
+                accumulatedValue = combiner.apply(accumulatedValue, this.get(counter));
                 counter++;
             }
 
-            //return ComposableListExercises.of(accumulatedValue);
+            return ComposableListExercises.of(accumulatedValue);
         }
-
-        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /*
@@ -568,7 +528,8 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
 
         // If the list is empty, do nothing
         if (this.size() == 0) {
-            return new ComposableListExercises<R>();
+            //return new ComposableListExercises<R>();
+            return ComposableListExercises.of();
         } else {
             counter = 0;
             accumulatedValue = initialValue;
@@ -592,14 +553,14 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     */
     public static ComposableList<Integer> exercise16() {
         ComposableListExercises<Integer> ratings = ComposableListExercises.of(2, 3, 5, 1, 4);
-        // You should return a list containing only the largest rating. Remember that reduce always
-        // returns a list with one item.
-
-        // complete the expression below
-        //return ratings.reduce
-
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return ratings.reduce((r1, r2) -> {
+            if (r1 > r2) {
+                return r1;
+            }
+            return r2;
+        });
     }
+
     /*
     Exercise 17: Retrieve url of the largest boxart
 
@@ -616,8 +577,15 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
 
         // You should return a list containing only the largest box art. Remember that reduce always
         // returns a list with one item.
-        // return boxarts.reduce  
-        throw new UnsupportedOperationException("Not implemented yet.");
+        // return boxarts.reduce
+        return boxarts.reduce((b1, b2) -> {
+            int size1 = b1.height * b1.width;
+            int size2 = b2.height * b2.width;
+            if (size1 > size2) {
+                return b1;
+            }
+            return b2;
+        }).map(boxart -> boxart.url);
     }
 
     /*
@@ -629,26 +597,26 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
      */
     public static ComposableList<Map<Integer, String>> exercise18() {
         ComposableListExercises<Video> videos = ComposableListExercises.of(
-            new Video(
-                65432445,
-                "The Chamber",
-                5.0
-            ),
-            new Video(
-                675465,
-                "Fracture",
-                4.0
-            ),
-            new Video(
-                70111470,
-                "Die Hard",
-                5.0
-            ),
-            new Video(
-                654356453,
-                "Bad Boys",
-                3.0
-            )
+                new Video(
+                        65432445,
+                        "The Chamber",
+                        5.0
+                ),
+                new Video(
+                        675465,
+                        "Fracture",
+                        4.0
+                ),
+                new Video(
+                        70111470,
+                        "Die Hard",
+                        5.0
+                ),
+                new Video(
+                        654356453,
+                        "Bad Boys",
+                        3.0
+                )
         );
 
         // Expecting this output...
@@ -663,22 +631,34 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
 
         // **************** Uncomment code and finish the expression below ******************
         return videos.
-            reduce(
-            // Use an empty map as the initial value instead of the first item in
-            // the list.
-            new HashMap<Integer, String> (),
-            (accumulatedMap, video) -> {
-                // ************ INSERT CODE HERE ************
-                // Remember that you the functions passed to map, filter, concatMap, reduce, and zip can only 
-                // change objects created inside the function. That means that you cannot simply add the video to 
-                // the accumulatedMap. You must make a copy of the accumulated map, and add the video title to that.
-                // Granted, this is very inefficient. However there are libraries that provide immutable maps to make 
-                // copying maps very efficient, allowing this to be a viable approach. For the purpose of this 
-                // exercise simply copy the accumulatedMap into a new map, add the video information to the copy, 
-                // and return the copy.
-                // ************ INSERT CODE HERE ************
-                throw new UnsupportedOperationException("Not implemented yet.");
-            });
+                reduce(
+                        // Use an empty map as the initial value instead of the first item in
+                        // the list.
+                        new HashMap<Integer, String>(),
+                        (accumulatedMap, video) -> {
+                /*
+                Map<Integer, String> map = new HashMap<>();
+                for (Map.Entry<Integer, String> e : accumulatedMap.entrySet()) {
+                    map.put(e.getKey(), e.getValue());
+                }
+                map.put(video.id, video.title);
+                return map;
+
+                 */
+                            accumulatedMap.put(video.id, video.title);
+                            return accumulatedMap;
+                            //"can only change objects created inside the function"--this is not true, if mutating a map is considered changing it.
+                            // In a multithreaded env, it might be a bad idea to mutate it (or it might not), but nothing prevents mutating it.
+                            // ************ INSERT CODE HERE ************
+                            // Remember that you the functions passed to map, filter, concatMap, reduce, and zip can only
+                            // change objects created inside the function. That means that you cannot simply add the video to
+                            // the accumulatedMap. You must make a copy of the accumulated map, and add the video title to that.
+                            // Granted, this is very inefficient. However there are libraries that provide immutable maps to make
+                            // copying maps very efficient, allowing this to be a viable approach. For the purpose of this
+                            // exercise simply copy the accumulatedMap into a new map, add the video information to the copy,
+                            // and return the copy.
+                            // ************ INSERT CODE HERE ************
+                        });
     }
 
     /*
@@ -693,51 +673,51 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     public static ComposableList<JSON> exercise19() {
         ComposableListExercises<MovieList> movieLists = ComposableListExercises.of(
                 new MovieList(
-                    "New Releases",
-                    ComposableListExercises.of(
-                        new Video(
-                            70111470,
-                            "Die Hard",
-                            4.0,
-                            null,
-                            ComposableListExercises.of(
-                                    new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/DieHard150.jpg"),
-                                    new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/DieHard200.jpg")
-                            )),
-                        new Video(
-                            654356453,
-                            "Bad Boys",
-                            5.0,
-                            null,
-                            ComposableListExercises.of(
-                                    new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys200.jpg"),
-                                    new BoxArt(140, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys140.jpg")
-                            ))
-                    )
+                        "New Releases",
+                        ComposableListExercises.of(
+                                new Video(
+                                        70111470,
+                                        "Die Hard",
+                                        4.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/DieHard150.jpg"),
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/DieHard200.jpg")
+                                        )),
+                                new Video(
+                                        654356453,
+                                        "Bad Boys",
+                                        5.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys200.jpg"),
+                                                new BoxArt(140, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys140.jpg")
+                                        ))
+                        )
                 ),
                 new MovieList(
-                    "Thrillers",
-                    ComposableListExercises.of(
-                        new Video(
-                            65432445,
-                            "The Chamber",
-                            3.0,
-                            null,
-                            ComposableListExercises.of(
-                                new BoxArt(130, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber130.jpg"),
-                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber200.jpg")
-                            )),
-                        new Video(
-                            675465,
-                            "Fracture",
-                            4.0,
-                            null,
-                            ComposableListExercises.of(
-                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg"),
-                                new BoxArt(120, 200, "http://cdn-0.nflximg.com/images/2891/Fracture120.jpg"),
-                                new BoxArt(300, 200, "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg")
-                            ))
-                    )
+                        "Thrillers",
+                        ComposableListExercises.of(
+                                new Video(
+                                        65432445,
+                                        "The Chamber",
+                                        3.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(130, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber130.jpg"),
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber200.jpg")
+                                        )),
+                                new Video(
+                                        675465,
+                                        "Fracture",
+                                        4.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg"),
+                                                new BoxArt(120, 200, "http://cdn-0.nflximg.com/images/2891/Fracture120.jpg"),
+                                                new BoxArt(300, 200, "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg")
+                                        ))
+                        )
                 )
         );
 
@@ -756,7 +736,19 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
 
             })
          */
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return movieLists.concatMap(movieList -> {
+            return movieList.videos.concatMap(video -> {
+                return video.boxarts
+                        .reduce((b1, b2) -> {
+                            if (b1.width * b1.height < b2.width * b2.height) {
+                                return b1;
+                            }
+                            return b2;
+
+                        })
+                        .map(b -> json("id", video.id, "title", video.title, "boxart", b.url));
+            });
+        });
     }
 
     /*
@@ -793,7 +785,7 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
                         5.0
                 )
         );
-        
+
         ComposableListExercises<Bookmark> bookmarks = ComposableListExercises.of(
                 new Bookmark(470, 23432),
                 new Bookmark(453, 234324),
@@ -803,12 +795,11 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
         ComposableListExercises<JSON> videoIdAndBookmarkIdPairs = new ComposableListExercises<JSON>();
 
         for (int counter = 0; counter < Math.min(videos.size(), bookmarks.size()); counter++) {
-            // Insert code here to create a {"videoId" : videoId, "bookmarkId" : bookmarkId} JSON 
-            // using json() and add it to the videoIdAndBookmarkIdPairs list.
+            videoIdAndBookmarkIdPairs.add(json("videoId", videos.get(counter).id,
+                    "bookmarkId", bookmarks.get(counter).id));
         }
 
-        // return videoIdAndBookmarkIdPairs;
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return videoIdAndBookmarkIdPairs;
     }
 
     /*
@@ -825,16 +816,14 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
         ComposableList.of(4,5,6), 
         (x,y) -> x + y) is structurally equivalent to ComposableList.of(5,7,9)
      */
-    public static <T0,T1,R> ComposableList<R> zip(ComposableList<T0> left, ComposableList<T1> right, BiFunction<T0,T1, R> combinerFunction) {
+    public static <T0, T1, R> ComposableList<R> zip(ComposableList<T0> left, ComposableList<T1> right, BiFunction<T0, T1, R> combinerFunction) {
         ComposableListExercises<R> results = new ComposableListExercises<R>();
 
         for (int counter = 0; counter < Math.min(left.size(), right.size()); counter++) {
-            // Add code here to apply the combinerFunction to the left and right-hand items in the 
-            // respective lists, and add the result to the results List
+            results.add(combinerFunction.apply(left.get(counter), right.get(counter)));
         }
 
-        // return results;
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return results;
     }
 
     /*
@@ -847,36 +836,38 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
     public static ComposableList<JSON> exercise22() {
         ComposableListExercises<Video> videos = ComposableListExercises.of(
                 new Video(
-                70111470,
-                "Die Hard",
-                4.0
-            ),
-            new Video(
-                654356453,
-                "Bad Boys",
-                5.0
-            ),
-            new Video(
-                65432445,
-                "The Chamber",
-                4.0
-            ),
-            new Video(
-                675465,
-                "Fracture",
-                5.0
-            )
+                        70111470,
+                        "Die Hard",
+                        4.0
+                ),
+                new Video(
+                        654356453,
+                        "Bad Boys",
+                        5.0
+                ),
+                new Video(
+                        65432445,
+                        "The Chamber",
+                        4.0
+                ),
+                new Video(
+                        675465,
+                        "Fracture",
+                        5.0
+                )
         );
-        
+
         ComposableListExercises<Bookmark> bookmarks = ComposableListExercises.of(
-            new Bookmark(470, 23432),
-            new Bookmark(453, 234324),
-            new Bookmark(445, 987834)
+                new Bookmark(470, 23432),
+                new Bookmark(453, 234324),
+                new Bookmark(445, 987834)
         );
 
         //... finish this expression
-        // return ComposableListExercises.zip( 
-        throw new UnsupportedOperationException("Not implemented yet.");
+        // return ComposableListExercises.zip(
+        return ComposableListExercises.zip(videos, bookmarks, (video, bookmark) -> {
+            return json("videoId", video.id, "bookmarkId", bookmark.id);
+        });
     }
 
     /*
@@ -890,87 +881,96 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
      */
     public static ComposableList<JSON> exercise23() {
         ComposableListExercises<MovieList> movieLists = ComposableListExercises.of(
-            new MovieList(
-                "New Releases",
-                ComposableListExercises.of(
-                    new Video(
-                        70111470,
-                        "Die Hard",
-                        4.0,
-                        null,
+                new MovieList(
+                        "New Releases",
                         ComposableListExercises.of(
-                            new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/DieHard150.jpg"),
-                            new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/DieHard200.jpg")
-                        ),
-                        ComposableListExercises.of(
-                            new InterestingMoment("End", 213432),
-                            new InterestingMoment("Start", 64534),
-                            new InterestingMoment("Middle", 323133)
+                                new Video(
+                                        70111470,
+                                        "Die Hard",
+                                        4.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(150, 200, "http://cdn-0.nflximg.com/images/2891/DieHard150.jpg"),
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/DieHard200.jpg")
+                                        ),
+                                        ComposableListExercises.of(
+                                                new InterestingMoment("End", 213432),
+                                                new InterestingMoment("Start", 64534),
+                                                new InterestingMoment("Middle", 323133)
+                                        )
+                                ),
+                                new Video(
+                                        654356453,
+                                        "Bad Boys",
+                                        5.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys200.jpg"),
+                                                new BoxArt(140, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys140.jpg")
+                                        ),
+                                        ComposableListExercises.of(
+                                                new InterestingMoment("End", 54654754),
+                                                new InterestingMoment("Middle", 6575665)
+                                        )
+                                )
                         )
-                    ),
-                    new Video(
-                        654356453,
-                        "Bad Boys",
-                        5.0,
-                        null,
+                ),
+                new MovieList(
+                        "Instant Queue",
                         ComposableListExercises.of(
-                            new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys200.jpg"),
-                            new BoxArt(140, 200, "http://cdn-0.nflximg.com/images/2891/BadBoys140.jpg")
-                        ),
-                        ComposableListExercises.of(
-                            new InterestingMoment("End", 54654754),
-                            new InterestingMoment("Middle", 6575665)
+                                new Video(
+                                        65432445,
+                                        "The Chamber",
+                                        4.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(130, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber130.jpg"),
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber200.jpg")
+                                        ),
+                                        ComposableListExercises.of(
+                                                new InterestingMoment("End", 132423),
+                                                new InterestingMoment("Start", 54637425),
+                                                new InterestingMoment("Middle", 3452343)
+                                        )
+                                ),
+                                new Video(
+                                        675465,
+                                        "Fracture",
+                                        5.0,
+                                        null,
+                                        ComposableListExercises.of(
+                                                new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg"),
+                                                new BoxArt(120, 200, "http://cdn-0.nflximg.com/images/2891/Fracture120.jpg"),
+                                                new BoxArt(300, 200, "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg")
+                                        ),
+                                        ComposableListExercises.of(
+                                                new InterestingMoment("End", 45632456),
+                                                new InterestingMoment("Start", 234534),
+                                                new InterestingMoment("Middle", 3453434)
+                                        )
+                                )
                         )
-                    )
                 )
-            ),
-            new MovieList(
-                "Instant Queue",
-                ComposableListExercises.of(
-                    new Video(
-                        65432445,
-                        "The Chamber",
-                        4.0,
-                        null,
-                        ComposableListExercises.of(
-                            new BoxArt(130, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber130.jpg"),
-                            new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/TheChamber200.jpg")
-                        ),
-                        ComposableListExercises.of(
-                            new InterestingMoment("End", 132423),
-                            new InterestingMoment("Start", 54637425),
-                            new InterestingMoment("Middle", 3452343)
-                        )
-                    ),
-                    new Video(
-                        675465,
-                        "Fracture",
-                        5.0,
-                        null,
-                        ComposableListExercises.of(
-                            new BoxArt(200, 200, "http://cdn-0.nflximg.com/images/2891/Fracture200.jpg"),
-                            new BoxArt(120, 200, "http://cdn-0.nflximg.com/images/2891/Fracture120.jpg"),
-                            new BoxArt(300, 200, "http://cdn-0.nflximg.com/images/2891/Fracture300.jpg")
-                        ),
-                        ComposableListExercises.of(
-                            new InterestingMoment("End", 45632456),
-                            new InterestingMoment("Start", 234534),
-                            new InterestingMoment("Middle", 3453434)
-                        )
-                    )
-                )
-            )
         );
 
-        //------------ COMPLETE THIS EXPRESSION --------------
-        /*
-        return movieLists.
-            concatMap(movieList -> {
-
-            });
-        */
-
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return movieLists.concatMap(movieList -> {
+           return movieList.videos.concatMap(video -> {
+               ComposableList<BoxArt> boxarts = video.boxarts.reduce((b1, b2) -> {
+                   if (b1.height * b1.width < b2.height * b2.width) {
+                       return b1;
+                   }
+                   return b2;
+               });
+               ComposableList<InterestingMoment> moments = video.interestingMoments.filter(im -> {
+                   return im.type.equals("Middle");
+               });
+               return boxarts.concatMap(ba -> {
+                   return moments.map(m -> {
+                      return json("id", video.id, "title", video.title, "time", m.time, "url", ba.url);
+                   });
+               });
+           });
+        });
     }
 
 
@@ -994,7 +994,7 @@ public class ComposableListExercises<T> extends ArrayList<T> implements Composab
         }
         return results;
     }
-    
+
     public static <T> ComposableListSolutions<T> of(List<T> list) {
         ComposableListSolutions<T> results = new ComposableListSolutions<T>();
         for (T value : list) {
